@@ -9,9 +9,11 @@ import SwiftUI
 
 @main   // the main of the program.
 struct MemoryApp: App {
+    let game = EmojiMemoryGame()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()   // ContentView.swift is everything we see in the app.
+            ContentView(viewModel: game)   // ContentView.swift is everything we see in the app.
         }
     }
 }
