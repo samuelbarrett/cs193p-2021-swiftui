@@ -16,8 +16,19 @@ struct ContentView: View {
     // it's not stored in memory, it's calculated (by a function that returns the contents each time it's called).
     var body: some View {
         VStack {
-            Text("Memorize!")
-                .font(.largeTitle)
+            // Header bar
+            HStack {
+                // New Game button
+                Button(action: {
+                    viewModel.newGame()
+                }, label: {
+                    Text("New Game")
+                        .font(.title2)
+                })
+                Spacer()
+                Text("Score: \(viewModel.score)")
+                    .font(.title2)
+            }
             // the grid of Cards (VGrid requires # of columns, entered as array of GridItems.
             //  these GridItems are highly customizable if we want.
             ScrollView {
@@ -32,7 +43,10 @@ struct ContentView: View {
                     }
                 }
             }
-            .foregroundColor(.red)
+            .foregroundColor(viewModel.color)
+            Text(viewModel.theme)
+                .font(.largeTitle)
+                
         }
         .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
         
@@ -64,8 +78,10 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = EmojiMemoryGame()
-        ContentView(viewModel: game)
-            .preferredColorScheme(.dark)
+        Group {
+            ContentView(viewModel: game)
+                .preferredColorScheme(.dark)
+        }
         ContentView(viewModel: game)
     }
 }

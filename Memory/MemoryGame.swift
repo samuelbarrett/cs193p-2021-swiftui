@@ -13,12 +13,14 @@ import Foundation   // no SwiftUI here, just the Foundation package
 
 struct MemoryGame<CardContent> where CardContent: Equatable {
     private(set) var cards: Array<Card>     // look but no touchy (so the ViewModel can't mess with it)
+    private(set) var score: Int             // keep track of score
     
     private var indexOfOnlyFaceUpCard: Int?
     
     // initialize the game.
     // createCardContent is a function passed into init to help us create the cards since the Model doesn't know what type they should be.
     init(numberOfPairsOfCards: Int, createCardContent: (Int) -> CardContent) {
+        score = 0
         cards = Array<Card>()
         // add numberOfPairsOfCards x 2 cards to the cards array.
         for pairIndex in 0..<numberOfPairsOfCards {
@@ -43,7 +45,18 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
                     // the cards are a match.
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
+                    score+=2 // player earns 2 points
+                } else {
+                    // mismatch: player is penalized one point per card that has previously been seen
+                    if cards[chosenIndex].seen {
+                        score-=1
+                    }
+                    if cards[potentialMatchIndex].seen {
+                        score-=1
+                    }
                 }
+                cards[chosenIndex].seen = true  // card has now been seen
+                cards[potentialMatchIndex].seen = true
                 indexOfOnlyFaceUpCard = nil // reset
             } else {
                 // make all cards face down (since there may be two cards face up already)
@@ -61,6 +74,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
     // this is more specific and clear than just having an outside struct.
     struct Card: Identifiable {
         var isFaceUp: Bool = false
+        var seen: Bool = false
         var isMatched: Bool = false
         var content: CardContent
         var id: Int
